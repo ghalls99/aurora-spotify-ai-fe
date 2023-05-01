@@ -1,3 +1,9 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .App {
   text-align: center;
 }
@@ -15,7 +21,6 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,4 +40,53 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+h1 {
+  color: white;
+}
+
+.App-body {
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  min-height: 100vh; /* set height to 100% */
+  flex: 1; /* add this rule to fill remaining space */
+}
+
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav li {
+  margin-right: 1rem;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+nav a:hover {
+  background-color: #fff;
+  color: #333;
 }
