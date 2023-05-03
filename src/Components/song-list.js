@@ -11,7 +11,9 @@ function renderRow(props) {
     <ListItem style={style} key={index} component="div" disablePadding>
       <ListItemButton>
         <ListItemText
-          primary={`${data[index].title} - ${data[index].artist}`}
+          primary={`${data[index]?.title || data[index]?.song} - ${
+            data[index].artist
+          }`}
         />
       </ListItemButton>
     </ListItem>
