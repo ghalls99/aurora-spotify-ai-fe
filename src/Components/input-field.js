@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { queryApi } from "../libs/api-config";
+import { queryApi, waitForPlaylist } from "../libs/api-config";
 import styles from "./input-field.module.css";
 export default function InputField({ onFormSubmit }) {
   const [value, setValue] = useState("");
@@ -22,8 +22,14 @@ export default function InputField({ onFormSubmit }) {
       },
       "post"
     );
-    console.log(response);
-    onFormSubmit(response);
+
+    console.log(`query response ${JSON.stringify(response)}`);
+    const { user_id, playlist_id } = response;
+
+    const playlist = JSON.parse(await waitForPlaylist(user_id, playlist_id));
+
+    console.log(playlist);
+    onFormSubmit(playlist);
     // handle the form submission here
   };
 
