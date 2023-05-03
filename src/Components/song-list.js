@@ -7,22 +7,23 @@ import { FixedSizeList } from "react-window";
 
 function renderRow(props) {
   const { index, style, data } = props;
+  const { title, song, artist } = data[index];
   return (
     <ListItem style={style} key={index} component="div" disablePadding>
       <ListItemButton>
-        <ListItemText
-          primary={`${data[index]?.title || data[index]?.song} - ${
-            data[index].artist
-          }`}
-        />
+        <ListItemText primary={`${title || song} - ${artist}`} />
       </ListItemButton>
     </ListItem>
   );
 }
 
 export default function VirtualizedList({ items }) {
-  console.log(`here is one item ${items[0].title}`);
+  console.log(`here is one item ${items[0]?.title}`);
   const width = 360;
+
+  if (items.length === 0) {
+    return <h1>PLaiYLIST</h1>;
+  }
   return (
     <Box
       sx={{

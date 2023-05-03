@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { queryApi, waitForPlaylist } from "../libs/api-config";
 import styles from "./input-field.module.css";
-export default function InputField({ onFormSubmit }) {
+
+export default function InputField({ onFormSubmit, isLoading, setLoading }) {
   const [value, setValue] = useState("");
 
   const handleChange = (event) => {
@@ -10,6 +11,7 @@ export default function InputField({ onFormSubmit }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const response = await queryApi(
       "https://et0kdemqlh.execute-api.us-east-1.amazonaws.com/generate-playlist",
       {
@@ -29,6 +31,7 @@ export default function InputField({ onFormSubmit }) {
     const playlist = JSON.parse(await waitForPlaylist(user_id, playlist_id));
 
     console.log(playlist);
+    setLoading(false);
     onFormSubmit(playlist);
     // handle the form submission here
   };

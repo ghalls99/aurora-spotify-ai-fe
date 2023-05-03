@@ -2,9 +2,11 @@ import "./App.css";
 import React, { useState } from "react";
 import InputField from "./Components/input-field";
 import SongList from "./Components/song-list";
+import Spinner from "./Components/spinner";
 
 function App() {
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleResponse = (responseData) => {
     setResponse(responseData);
@@ -31,12 +33,12 @@ function App() {
         </nav>
       </header>
       <div className="App-body">
-        {response ? (
-          <SongList items={response} />
-        ) : (
-          <div>{<h1>PlAIylist</h1>}</div>
-        )}
-        <InputField onFormSubmit={handleResponse} />
+        {isLoading ? <Spinner /> : <SongList items={response} />}
+        <InputField
+          onFormSubmit={handleResponse}
+          isLoading={isLoading}
+          setLoading={setIsLoading}
+        />
       </div>
     </div>
   );
