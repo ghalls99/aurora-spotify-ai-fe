@@ -32,6 +32,10 @@ body {
   color: #61dafb;
 }
 
+.App-inputs {
+  width: 100%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -88,4 +92,19 @@ nav a {
 nav a:hover {
   background-color: #fff;
   color: #333;
+}
+
+.input-wrapper {
+  margin: 0 auto;
+  width: 50%;
+  align-items: center;
+  padding-bottom: 15px;
+}
+
+@media only screen and (max-width: 600px) {
+  .input-wrapper {
+    width: 80%;
+    align-items: center;
+    justify-content: flex-end;
+  }
 }

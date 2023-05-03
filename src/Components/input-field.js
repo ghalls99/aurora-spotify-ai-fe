@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { queryApi, waitForPlaylist } from "../libs/api-config";
 import styles from "./input-field.module.css";
 
-export default function InputField({ onFormSubmit, isLoading, setLoading }) {
+export default function InputField({
+  onFormSubmit,
+  isLoading,
+  setLoading,
+  response,
+  setUser,
+  setPlaylist,
+  setRegenerate,
+}) {
   const [value, setValue] = useState("");
 
   const handleChange = (event) => {
@@ -32,12 +40,14 @@ export default function InputField({ onFormSubmit, isLoading, setLoading }) {
 
     console.log(playlist);
     setLoading(false);
+    setUser(user_id);
+    setPlaylist(playlist_id);
+    setRegenerate(true);
     onFormSubmit(playlist);
     // handle the form submission here
   };
-
   return (
-    <form onSubmit={handleSubmit} className={styles["form-container"]}>
+    <div className={styles["form-container"]}>
       <input
         type="text"
         value={value}
@@ -45,9 +55,13 @@ export default function InputField({ onFormSubmit, isLoading, setLoading }) {
         onChange={handleChange}
         className={styles["form-input"]}
       />
-      <button type="submit" className={styles["form-submit"]}>
+      <button
+        type="submit"
+        className={styles["form-submit"]}
+        onClick={handleSubmit}
+      >
         Submit
       </button>
-    </form>
+    </div>
   );
 }
