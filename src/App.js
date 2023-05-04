@@ -45,7 +45,7 @@ function App() {
     setIsLoading(true);
     getAuth();
     setIsLoading(false);
-  }, [getAuth]);
+  }, [getAuth, setIsLoading]);
 
   const handleResponse = (responseData) => {
     setResponse(responseData);
