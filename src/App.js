@@ -17,7 +17,7 @@ function App() {
   const [user, setUser] = useState("");
   const [playlist, setPlaylist] = useState("");
   const [code, setCode] = useState(null);
-  const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6"; // Replace with your client ID
+  const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
 
   const getAuth = useCallback(async () => {
     try {
@@ -25,9 +25,11 @@ function App() {
       const originalCode = searchParams.get("code");
       setCode(originalCode);
 
-      if (!code) {
+      if (!originalCode) {
+        console.log("we are here again");
         redirectToAuthCodeFlow(clientId);
       } else {
+        console.log("we are now here");
         const accessToken = await getAccessToken(clientId, code);
         const profile = await fetchProfile(accessToken);
         console.log(profile);
