@@ -1,7 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 
-const baseUrl = "https://api.spotify.com/v1/";
+const baseUrl = "https://api.spotify.com/v1";
 
 export const searchTracks = async (track, token) => {
   const query = formatSearchParams(track);
