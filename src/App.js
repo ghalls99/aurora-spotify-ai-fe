@@ -49,7 +49,7 @@ function App() {
   }, [code, setToken, setCode]);
 
   const handleResponse = (responseData) => {
-    console.log(`we are currently here ${responseData}`);
+    console.log(`we are currently here ${responseData} ${user}`);
     setResponse(responseData);
     localStorage.setItem("playlist", JSON.stringify(responseData));
   };
@@ -142,6 +142,7 @@ function App() {
               setLoading={setIsLoading}
               response={response}
               user={user}
+              setUser={setUser}
               setPlaylist={setPlaylist}
               setRegenerate={setRegenerate}
               loadingName={"Loading..."}
@@ -151,6 +152,7 @@ function App() {
             <div>
               <RegenerateButton
                 isLoading={isLoading}
+                user={user}
                 name={"Regenerate Response"}
                 loadingName={"Regenerating..."}
                 handleClick={handleRegenerate}

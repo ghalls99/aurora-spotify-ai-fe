@@ -8,6 +8,7 @@ export default function InputField({
   setLoading,
   response,
   user,
+  setUser,
   setPlaylist,
   setRegenerate,
 }) {
@@ -48,6 +49,7 @@ export default function InputField({
     setLoading(false);
     setPlaylist(playlist_id);
     setRegenerate(true);
+    setUser(user_id);
     onFormSubmit(playlist);
     // handle the form submission here
   };
