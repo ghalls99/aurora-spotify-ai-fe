@@ -21,14 +21,12 @@ function App() {
 
   const getAuth = useCallback(async () => {
     try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const originalCode = searchParams.get("code");
+      setCode(originalCode);
+
       if (!code) {
         redirectToAuthCodeFlow(clientId);
-        const searchParams = new URLSearchParams(window.location.search);
-        const newCode = searchParams.get("code");
-        console.log(newCode);
-        if (newCode) {
-          setCode(newCode); // update the code state variable
-        }
       } else {
         const accessToken = await getAccessToken(clientId, code);
         const profile = await fetchProfile(accessToken);
