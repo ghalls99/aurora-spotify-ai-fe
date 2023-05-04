@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const searchTracks = async (track) => {
+export const searchTracks = async (track, token) => {
   const query = formatSearchParams(track);
 
   console.log(query);
@@ -13,7 +13,7 @@ export const searchTracks = async (track) => {
       type: "album",
     },
     headers: {
-      Authorization: "Bearer BQArNm...fyVxnZ",
+      Authorization: `Bearer ${token}`,
     },
   };
 

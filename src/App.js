@@ -19,6 +19,7 @@ function App() {
   const [user, setUser] = useState("");
   const [playlist, setPlaylist] = useState("");
   const [code, setCode] = useState(null);
+  const [token, setToken] = useState(null);
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
 
   const getAuth = useCallback(async () => {
@@ -35,11 +36,12 @@ function App() {
         const accessToken = await getAccessToken(clientId, code);
         const profile = await fetchProfile(accessToken);
         console.log(profile);
+        setToken(accessToken);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [code]);
+  }, [code, setToken, setCode]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -70,7 +72,8 @@ function App() {
 
   const handleSpotifySearch = async () => {
     for (const item in response) {
-      const id = await searchTracks(item);
+      const ids = await searchTracks(item, token);
+      console.log(ids);
     }
   };
 
@@ -109,6 +112,7 @@ function App() {
               setResponse={setResponse}
               Name={"Export To Spotify"}
               loadingName={"Exporting..."}
+              handleClick={handleSpotifySearch}
             />
           </div>
         )}
