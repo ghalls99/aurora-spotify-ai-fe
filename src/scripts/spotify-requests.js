@@ -20,7 +20,7 @@ export const searchTracks = async (track, token) => {
     },
   };
 
-  console.log(`getting track ${axiosParams}`);
+  console.log(`getting track ${JSON.stringify(axiosParams)}`);
 
   const response = await callAxios(axiosParams);
 
@@ -73,7 +73,7 @@ function formatSearchParams(params) {
   let formattedSong = song || title || "";
   formattedSong = encodeURI(formattedSong);
   const formattedArtist = encodeURI(artist);
-  return `remaster%20track:${formattedSong}%20artist:${formattedArtist}`;
+  return `remaster track:${formattedSong} artist:${formattedArtist}`;
 }
 
 const convertIdsToSpotifyURI = (ids) => {
