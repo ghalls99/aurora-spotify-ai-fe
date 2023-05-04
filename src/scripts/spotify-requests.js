@@ -25,6 +25,7 @@ export const searchTracks = async (track, token) => {
 };
 
 function formatSearchParams(params) {
+  console.log(params);
   const { song, title, artist } = params;
   let formattedSong = song || title || "";
   formattedSong = formattedSong.replace(/\s+/g, "%20");
