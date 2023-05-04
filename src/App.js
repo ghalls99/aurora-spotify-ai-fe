@@ -1,9 +1,14 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import InputField from "./Components/input-field";
 import SongList from "./Components/song-list";
 import Spinner from "./Components/spinner";
 import RegenerateButton from "./Components/large-button";
+import {
+  getAccessToken,
+  redirectToAuthCodeFlow,
+  fetchProfile,
+} from "./scripts/authorize-spotify";
 
 function App() {
   const [response, setResponse] = useState([]);
@@ -11,6 +16,35 @@ function App() {
   const [regenerate, setRegenerate] = useState(false);
   const [user, setUser] = useState("");
   const [playlist, setPlaylist] = useState("");
+  const [code, setCode] = useState(null);
+  const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6"; // Replace with your client ID
+
+  const getAuth = useCallback(async () => {
+    try {
+      if (!code) {
+        redirectToAuthCodeFlow(clientId);
+        const searchParams = new URLSearchParams(window.location.search);
+        const newCode = searchParams.get("code");
+        if (newCode) {
+          setCode(newCode); // update the code state variable
+        } else {
+          getAuth();
+        }
+      } else {
+        const accessToken = await getAccessToken(clientId, code);
+        const profile = await fetchProfile(accessToken);
+        console.log(profile);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [code]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getAuth();
+    setIsLoading(false);
+  }, [getAuth]);
 
   const handleResponse = (responseData) => {
     setResponse(responseData);
