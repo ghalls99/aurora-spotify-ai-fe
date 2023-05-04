@@ -13,7 +13,6 @@ export const searchTracks = async (track, token) => {
     url: `${baseUrl}/search`,
     params: {
       q: query,
-      type: "album",
     },
     headers: {
       Authorization: `Bearer ${token}`,
@@ -71,7 +70,7 @@ function formatSearchParams(params) {
   console.log(params);
   const { song, title, artist } = params;
   let formattedSong = song || title || "";
-  return encodeURI(`remaster track:${formattedSong} artist:${artist}`);
+  return `remaster track:${formattedSong} artist:${artist}`;
 }
 
 const convertIdsToSpotifyURI = (ids) => {
