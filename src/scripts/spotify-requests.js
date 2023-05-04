@@ -71,8 +71,8 @@ function formatSearchParams(params) {
   console.log(params);
   const { song, title, artist } = params;
   let formattedSong = song || title || "";
-  formattedSong = formattedSong.replace(/\s+/g, "%20");
-  const formattedArtist = artist.replace(/\s+/g, "%20");
+  formattedSong = encodeURI(formattedSong);
+  const formattedArtist = encodeURI(artist);
   return `remaster%20track:${formattedSong}%20artist:${formattedArtist}`;
 }
 
