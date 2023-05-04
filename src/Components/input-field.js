@@ -20,17 +20,22 @@ export default function InputField({
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    const body = {
+      message: [
+        {
+          role: "user",
+          content: value,
+        },
+      ],
+    };
+
+    if (user) {
+      body.user = user;
+    }
+
     const response = await queryApi(
       "https://et0kdemqlh.execute-api.us-east-1.amazonaws.com/generate-playlist",
-      {
-        user_id: user,
-        message: [
-          {
-            role: "user",
-            content: value,
-          },
-        ],
-      },
+      body,
       "post"
     );
 
