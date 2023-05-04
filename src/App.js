@@ -72,6 +72,8 @@ function App() {
 
   const handleSpotifySearch = async () => {
     for (const item in response) {
+      console.log(response);
+      console.log(item);
       const ids = await searchTracks(item, token);
       console.log(ids);
     }
