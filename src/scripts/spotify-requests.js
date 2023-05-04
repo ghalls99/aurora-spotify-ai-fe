@@ -12,7 +12,7 @@ export const searchTracks = async (track, token) => {
     method: "GET",
     url: `${baseUrl}/search`,
     params: {
-      q: query,
+      q: encodeURI(query),
     },
     headers: {
       Authorization: `Bearer ${token}`,
