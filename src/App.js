@@ -26,8 +26,6 @@ function App() {
   const [token, setToken] = useState(null);
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
 
-  console.log(response);
-
   const getAuth = useCallback(async () => {
     try {
       const searchParams = new URLSearchParams(window.location.search);
@@ -51,8 +49,9 @@ function App() {
   }, [code, setToken, setCode]);
 
   const handleResponse = (responseData) => {
+    console.log(`we are currently here ${responseData}`);
     setResponse(responseData);
-    localStorage.setItem("playlist", JSON.stringify(response));
+    localStorage.setItem("playlist", JSON.stringify(responseData));
   };
 
   const handleRegenerate = async () => {
