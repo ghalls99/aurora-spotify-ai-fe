@@ -25,6 +25,7 @@ function App() {
         redirectToAuthCodeFlow(clientId);
         const searchParams = new URLSearchParams(window.location.search);
         const newCode = searchParams.get("code");
+        console.log(newCode);
         if (newCode) {
           setCode(newCode); // update the code state variable
         } else {
