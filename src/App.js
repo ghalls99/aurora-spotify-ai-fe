@@ -74,9 +74,12 @@ function App() {
   const handleSpotifyExport = async () => {
     setIsLoading(true);
     const playlistData = JSON.parse(localStorage.getItem("playlist"));
-    console.log(`here is playlist ${playlistData}`);
+    const searchParams = new URLSearchParams(window.location.search);
+    const originalCode = searchParams.get("code");
+    setCode(originalCode);
+    console.log(`here is playlist ${playlistData} and code ${code}`);
     setResponse(playlistData);
-    const accessToken = await getAccessToken(clientId, code);
+    const accessToken = await getAccessToken(clientId, originalCode);
     const ids = await Promise.all(
       playlistData.map(async (item) => {
         const trackId = await searchTracks(item, accessToken);
