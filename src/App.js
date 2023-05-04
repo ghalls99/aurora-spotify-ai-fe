@@ -75,6 +75,7 @@ function App() {
     setIsLoading(true);
     const playlistData = JSON.parse(localStorage.getItem("playlist"));
     console.log(`here is playlist ${playlistData}`);
+    setResponse(playlistData);
     const ids = await Promise.all(
       playlistData.map(async (item) => {
         const trackId = await searchTracks(item, token);
