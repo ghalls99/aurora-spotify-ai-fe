@@ -1,13 +1,8 @@
 import Button from "@mui/material/Button";
-import { queryApi, waitForPlaylist } from "../libs/api-config";
 
 export default function RegenerateButton({
-  handleResponse,
-  currentUser,
-  currentPlaylist,
   isLoading,
-  setIsLoading,
-  Name,
+  name,
   loadingName,
   handleClick,
 }) {
@@ -17,7 +12,7 @@ export default function RegenerateButton({
         <Button variant="outlined">{loadingName}</Button>
       ) : (
         <Button variant="contained" onClick={handleClick}>
-          {Name}
+          {name}
         </Button>
       )}
     </>

@@ -7,7 +7,7 @@ export default function InputField({
   isLoading,
   setLoading,
   response,
-  setUser,
+  user,
   setPlaylist,
   setRegenerate,
 }) {
@@ -23,6 +23,7 @@ export default function InputField({
     const response = await queryApi(
       "https://et0kdemqlh.execute-api.us-east-1.amazonaws.com/generate-playlist",
       {
+        user_id: user,
         message: [
           {
             role: "user",
@@ -34,13 +35,12 @@ export default function InputField({
     );
 
     console.log(`query response ${JSON.stringify(response)}`);
-    const { user_id, playlist_id } = response;
+    const { playlist_id } = response;
 
-    const playlist = JSON.parse(await waitForPlaylist(user_id, playlist_id));
+    const playlist = JSON.parse(await waitForPlaylist(user, playlist_id));
 
     console.log(playlist);
     setLoading(false);
-    setUser(user_id);
     setPlaylist(playlist_id);
     setRegenerate(true);
     onFormSubmit(playlist);

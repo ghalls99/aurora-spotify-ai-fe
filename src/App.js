@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import InputField from "./Components/input-field";
 import SongList from "./Components/song-list";
 import Spinner from "./Components/spinner";
@@ -10,7 +10,11 @@ import {
   fetchProfile,
 } from "./scripts/authorize-spotify";
 import { queryApi, waitForPlaylist } from "./libs/api-config";
-import { searchTracks } from "./scripts/spotify-requests";
+import {
+  addTracksToPlaylist,
+  createPlaylist,
+  searchTracks,
+} from "./scripts/spotify-requests";
 
 function App() {
   const [response, setResponse] = useState([]);
@@ -36,18 +40,13 @@ function App() {
         const accessToken = await getAccessToken(clientId, code);
         const profile = await fetchProfile(accessToken);
         console.log(profile);
+        setUser(profile.id);
         setToken(accessToken);
       }
     } catch (error) {
       console.log(error);
     }
   }, [code, setToken, setCode]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    getAuth();
-    setIsLoading(false);
-  }, [getAuth, setIsLoading]);
 
   const handleResponse = (responseData) => {
     setResponse(responseData);
@@ -70,13 +69,22 @@ function App() {
     handleResponse(newPlaylist);
   };
 
-  const handleSpotifySearch = async () => {
-    for (const item in response) {
-      console.log(response);
-      console.log(item);
-      const ids = await searchTracks(item, token);
-      console.log(ids);
+  const handleSpotifyExport = async () => {
+    setIsLoading(true);
+
+    const ids = await Promise.all(
+      response.map((item) => searchTracks(item, token))
+    );
+    const allIds = ids.flat();
+
+    const { playlistId } = await createPlaylist(user);
+    const exported = await addTracksToPlaylist(allIds, token, playlistId);
+
+    if (exported) {
+      console.log(exported);
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -107,14 +115,15 @@ function App() {
             <SongList items={response} />
             <RegenerateButton
               isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              currentUser={user}
-              currentPlaylist={playlist}
-              handleResponse={handleResponse}
-              setResponse={setResponse}
-              Name={"Export To Spotify"}
+              name={"Export To Spotify"}
               loadingName={"Exporting..."}
-              handleClick={handleSpotifySearch}
+              handleClick={() => {
+                setIsLoading(true);
+                getAuth().then(() => {
+                  setIsLoading(false);
+                  handleSpotifyExport();
+                });
+              }}
             />
           </div>
         )}
@@ -125,7 +134,7 @@ function App() {
               isLoading={isLoading}
               setLoading={setIsLoading}
               response={response}
-              setUser={setUser}
+              user={user}
               setPlaylist={setPlaylist}
               setRegenerate={setRegenerate}
               loadingName={"Loading..."}
@@ -135,12 +144,8 @@ function App() {
             <div>
               <RegenerateButton
                 isLoading={isLoading}
-                setIsLoading={setIsLoading}
-                currentUser={user}
-                currentPlaylist={playlist}
-                handleResponse={handleResponse}
-                setResponse={setResponse}
-                Name={"Regenerate Response"}
+                name={"Regenerate Response"}
+                loadingName={"Regenerating..."}
                 handleClick={handleRegenerate}
               />
             </div>
