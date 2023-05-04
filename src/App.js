@@ -28,8 +28,6 @@ function App() {
         console.log(newCode);
         if (newCode) {
           setCode(newCode); // update the code state variable
-        } else {
-          getAuth();
         }
       } else {
         const accessToken = await getAccessToken(clientId, code);
