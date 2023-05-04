@@ -40,9 +40,9 @@ export default function InputField({
     );
 
     console.log(`query response ${JSON.stringify(response)}`);
-    const { playlist_id } = response;
+    const { user_id, playlist_id } = response;
 
-    const playlist = JSON.parse(await waitForPlaylist(user, playlist_id));
+    const playlist = JSON.parse(await waitForPlaylist(user_id, playlist_id));
 
     console.log(playlist);
     setLoading(false);
