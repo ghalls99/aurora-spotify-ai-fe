@@ -26,6 +26,8 @@ function App() {
   const [token, setToken] = useState(null);
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
 
+  console.log(response);
+
   const getAuth = useCallback(async () => {
     try {
       const searchParams = new URLSearchParams(window.location.search);
@@ -50,6 +52,7 @@ function App() {
 
   const handleResponse = (responseData) => {
     setResponse(responseData);
+    localStorage.setItem("playlist", JSON.stringify(response));
   };
 
   const handleRegenerate = async () => {
@@ -71,9 +74,14 @@ function App() {
 
   const handleSpotifyExport = async () => {
     setIsLoading(true);
-
+    const playlistData = JSON.parse(localStorage.getItem("playlist"));
+    console.log(`here is playlist ${playlistData}`);
     const ids = await Promise.all(
-      response.map((item) => searchTracks(item, token))
+      playlistData.map(async (item) => {
+        const trackId = await searchTracks(item, token);
+        console.log(`track id ${trackId}`);
+        return trackId;
+      })
     );
     const allIds = ids.flat();
 

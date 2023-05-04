@@ -18,7 +18,7 @@ function renderRow(props) {
 }
 
 export default function VirtualizedList({ items }) {
-  console.log(`here is one item ${items[0]?.title}`);
+  console.log(`here is one item ${items[0]?.song}`);
   const width = 360;
 
   if (items.length === 0) {

@@ -20,7 +20,7 @@ export const searchTracks = async (track, token) => {
     },
   };
 
-  console.log(`getting track ${toString(axiosParams)}`);
+  console.log(`getting track ${axiosParams}`);
 
   const response = await callAxios(axiosParams);
 
