@@ -36,7 +36,7 @@ export const addTracksToPlaylist = async (ids, token, playlistId) => {
     method: "POST",
     url: `${baseUrl}/playlists/${playlistId}/tracks`,
     params: {
-      q: string,
+      q: encodeURI(string),
     },
     headers: {
       Authorization: `Bearer ${token}`,
@@ -71,9 +71,7 @@ function formatSearchParams(params) {
   console.log(params);
   const { song, title, artist } = params;
   let formattedSong = song || title || "";
-  formattedSong = encodeURI(formattedSong);
-  const formattedArtist = encodeURI(artist);
-  return `remaster track:${formattedSong} artist:${formattedArtist}`;
+  return encodeURI(`remaster track:${formattedSong} artist:${artist}`);
 }
 
 const convertIdsToSpotifyURI = (ids) => {
