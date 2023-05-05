@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import InputField from "./Components/input-field";
 import SongList from "./Components/song-list";
 import Spinner from "./Components/spinner";
@@ -39,7 +39,18 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-  }, [code, setToken, setCode]);
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("playlist")) {
+      const playlistData = JSON.parse(localStorage.getItem("playlist"));
+      setResponse(playlistData);
+
+      /*const searchParams = new URLSearchParams(window.location.search);
+      const originalCode = searchParams.get("code") || "";
+      localStorage.setItem("challenge-code", originalCode);*/
+    }
+  }, [setResponse]);
 
   const handleResponse = (responseData) => {
     console.log(`we are currently here ${responseData} ${user}`);
@@ -67,18 +78,17 @@ function App() {
   const handleSpotifyExport = async () => {
     setIsLoading(true);
     const playlistData = JSON.parse(localStorage.getItem("playlist"));
+
     const searchParams = new URLSearchParams(window.location.search);
-    const originalCode = searchParams.get("code");
+
+    const originalCode = searchParams.get("code") || "";
+    setCode(originalCode);
 
     if (!originalCode) {
       redirectToAuthCodeFlow(clientId);
       return;
     }
 
-    console.log(`here is playlist ${playlistData} and code ${code}`);
-    setResponse(playlistData);
-
-    setCode(originalCode);
     const accessToken = await getAccessToken(clientId, originalCode);
     const { id } = await fetchProfile(accessToken);
 

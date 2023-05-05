@@ -58,7 +58,7 @@ export const createPlaylist = async (user_id, token) => {
     method: "POST",
     url: `${baseUrl}/users/${user_id}/playlists`,
     data: {
-      name: uuidv4(),
+      name: JSON.stringify(uuidv4()),
       description: "New Ai Generated Playlist",
       public: false,
     },
