@@ -44,14 +44,10 @@ function App() {
       const currentExpir = Number(localStorage.getItem("token-expiration"));
       setCode(originalCode);
 
-      if (
-        !oldAccessToken ||
-        !currentExpir ||
-        currentExpir < Date.now() - currentExpir
-      ) {
+      if (!oldAccessToken || !currentExpir || currentExpir < Date.now()) {
         console.log("we are here again");
         redirectToAuthCodeFlow(clientId);
-        localStorage.setItem("token-expiration", String(Date.now()));
+        localStorage.setItem("token-expiration", String(Date.now() + 600000));
 
         const accessToken = await getAccessToken(clientId, originalCode);
         localStorage.setItem("access-token", accessToken);
