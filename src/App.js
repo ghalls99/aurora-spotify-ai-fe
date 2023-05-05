@@ -35,13 +35,6 @@ function App() {
       if (!originalCode) {
         console.log("we are here again");
         redirectToAuthCodeFlow(clientId);
-      } else {
-        console.log("we are now here");
-        const accessToken = await getAccessToken(clientId, code);
-        const profile = await fetchProfile(accessToken);
-        console.log(profile);
-        setUser(profile.id);
-        setToken(accessToken);
       }
     } catch (error) {
       console.log(error);
@@ -87,6 +80,7 @@ function App() {
 
     setCode(originalCode);
     const accessToken = await getAccessToken(clientId, originalCode);
+    const { id } = await fetchProfile(accessToken);
 
     const ids = await Promise.all(
       playlistData.map(async (item) => {
@@ -97,7 +91,7 @@ function App() {
     );
     const allIds = ids.flat();
 
-    const { playlistId } = await createPlaylist(user);
+    const { playlistId } = await createPlaylist(id);
     const exported = await addTracksToPlaylist(allIds, accessToken, playlistId);
 
     if (exported) {
