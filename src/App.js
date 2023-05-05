@@ -45,17 +45,25 @@ function App() {
     if (localStorage.getItem("playlist")) {
       const playlistData = JSON.parse(localStorage.getItem("playlist"));
       setResponse(playlistData);
-
-      /*const searchParams = new URLSearchParams(window.location.search);
-      const originalCode = searchParams.get("code") || "";
-      localStorage.setItem("challenge-code", originalCode);*/
     }
-  }, [setResponse]);
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("playlist");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const handleResponse = (responseData) => {
     console.log(`we are currently here ${responseData} ${user}`);
     setResponse(responseData);
-    localStorage.setItem("playlist", JSON.stringify(responseData));
+    sessionStorage.setItem("playlist", JSON.stringify(responseData));
   };
 
   const handleRegenerate = async () => {
@@ -77,7 +85,7 @@ function App() {
 
   const handleSpotifyExport = async () => {
     setIsLoading(true);
-    const playlistData = JSON.parse(localStorage.getItem("playlist"));
+    const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
 
     const searchParams = new URLSearchParams(window.location.search);
 
