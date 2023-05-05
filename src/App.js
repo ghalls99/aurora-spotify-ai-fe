@@ -141,6 +141,8 @@ function App() {
     );
     const allIds = ids.flat();
 
+    console.log(`all ids ${JSON.stringify(allIds)}`);
+
     //Actually creating the playlist
     const { playlistId } = await createPlaylist(id, accessToken);
     const exported = await addTracksToPlaylist(allIds, accessToken, playlistId);

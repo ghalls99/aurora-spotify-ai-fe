@@ -22,11 +22,7 @@ export const searchTracks = async (track, token) => {
     },
   };
 
-  console.log(`getting track ${JSON.stringify(axiosParams)}`);
-
   const response = await callAxios(axiosParams);
-
-  console.log(JSON.stringify(response));
 
   const bestMatchingSongIndex = findBestMatchingArtist(
     response.tracks.items,
@@ -34,9 +30,9 @@ export const searchTracks = async (track, token) => {
     0.7
   );
 
-  console.log(`index ${bestMatchingSongIndex}`);
-
-  console.log("here we are " + response.tracks.items[bestMatchingSongIndex].id);
+  console.log(
+    "best matching track" + response.tracks.items[bestMatchingSongIndex].id
+  );
 
   return response.tracks.items[bestMatchingSongIndex].id;
 };
@@ -112,7 +108,6 @@ export const callAxios = async (params) => {
     console.log(response.error || "error with the request");
     return response.error || "error with the request";
   }
-  console.log(`axios data ${JSON.stringify(response.data)}`);
   return response.data;
 };
 
@@ -127,7 +122,6 @@ const findBestMatchingArtist = (
   let index = 0;
 
   for (const track of tracks) {
-    console.log(`the track ${JSON.stringify(tracks)}`);
     if (track.artists.length > 1) {
       for (const artist of track.artists) {
         subArtists.push(artist.name);
