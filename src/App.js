@@ -30,7 +30,7 @@ function App() {
   const [toastMessage, setToastMessage] = useState(false);
 
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
-  const TTL = 1000; // 10 minutes
+  let TTL = 30000; // 10 minutes
 
   const getAuth = useCallback(async () => {
     try {
@@ -87,6 +87,8 @@ function App() {
     const newPlaylist = JSON.parse(await waitForPlaylist(user, playlist_id));
     setIsLoading(false);
     handleResponse(newPlaylist);
+    sessionStorage.setItem("playlist", JSON.stringify(newPlaylist));
+    TTL = 30000;
     setToastMessage("Successfully regenerated list");
     setOpen(true);
   };
