@@ -62,8 +62,13 @@ function App() {
 
       if (now - timestamp < TTL) {
         setResponse(data);
-        handleSpotifyExport();
-        localStorage.removeItem("exported");
+
+        async function spotifyWrapper() {
+          await handleSpotifyExport();
+          localStorage.removeItem("exported");
+        }
+
+        spotifyWrapper();
       } else {
         sessionStorage.removeItem("playlist");
       }
