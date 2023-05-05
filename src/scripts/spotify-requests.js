@@ -165,5 +165,5 @@ const findBestMatchingArtist = (
   }
 
   console.log(`best matching stuff ${JSON.stringify(currentFoundIndex)}`);
-  return currentFoundIndex.index;
+  return currentFoundIndex.currentIndex;
 };
