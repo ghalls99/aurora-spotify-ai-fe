@@ -1,5 +1,6 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import stringSimilarity from "string-similarity";
 
 const baseUrl = "https://api.spotify.com/v1";
 
@@ -12,9 +13,9 @@ export const searchTracks = async (track, token) => {
     method: "GET",
     url: `${baseUrl}/search`,
     params: {
-      q: `${encodeURI(query)}`,
+      q: `${encodeURIComponent(query)}`,
       type: "track",
-      limit: 1,
+      limit: 20,
     },
     headers: {
       Authorization: `Bearer ${token}`,
@@ -27,7 +28,13 @@ export const searchTracks = async (track, token) => {
 
   console.log(JSON.stringify(response));
 
-  return response.tracks.items[0].id;
+  const bestMatchingSongIndex = findBestMatchingArtist(
+    response.tracks.items,
+    track.artist,
+    0.7
+  );
+
+  return response.tracks.items[bestMatchingSongIndex].id;
 };
 
 export const addTracksToPlaylist = async (ids, token, playlistId) => {
@@ -103,4 +110,53 @@ export const callAxios = async (params) => {
   }
   console.log(`axios data ${JSON.stringify(response.data)}`);
   return response.data;
+};
+
+const findBestMatchingArtist = (
+  tracks,
+  artistToFind,
+  similarityThreshold = 0.7
+) => {
+  let artists = [];
+  let subArtists = [];
+  let currentFoundIndex = { target: "no-target", rating: 0, currentIndex: -1 };
+  let index = 0;
+
+  for (const track of tracks) {
+    if (track.artists.length > 1) {
+      for (const artist of artists) {
+        subArtists.push(artist.name);
+      }
+      const matchingArtist = stringSimilarity.findBestMatch(
+        artistToFind,
+        subArtists
+      );
+      if (
+        matchingArtist.bestMatch.rating >= similarityThreshold &&
+        currentFoundIndex.rating < matchingArtist.bestMatch.rating
+      ) {
+        currentFoundIndex = {
+          ...matchingArtist.bestMatch,
+          currentIndex: index,
+        };
+      }
+    } else {
+      const match = stringSimilarity.compareTwoStrings(
+        artistToFind,
+        track.artists[0].name
+      );
+
+      if (match >= similarityThreshold && currentFoundIndex.rating < match) {
+        artists.push(track.artists[0].name);
+        currentFoundIndex = {
+          target: track.artists[0].name,
+          rating: match,
+          currentIndex: index,
+        };
+      }
+    }
+    index = index + 1;
+  }
+
+  return currentFoundIndex.index;
 };
