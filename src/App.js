@@ -77,6 +77,7 @@ function App() {
 
   //Initial playlist handler
   const handleResponse = (responseData) => {
+    setOpen(false);
     console.log(`we are currently here ${responseData} ${user}`);
     setResponse(responseData);
     const now = Date.now();
@@ -87,6 +88,7 @@ function App() {
   };
 
   const handleRegenerate = async () => {
+    setOpen(false);
     setIsLoading(true);
     const response = await queryApi(
       "https://et0kdemqlh.execute-api.us-east-1.amazonaws.com/regenerate-playlist",
@@ -109,6 +111,7 @@ function App() {
 
   //Spotify export handler
   const handleSpotifyExport = async () => {
+    setOpen(false);
     setIsExporting(true);
     const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
 
