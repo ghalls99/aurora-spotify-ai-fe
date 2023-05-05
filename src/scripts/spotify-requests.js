@@ -49,7 +49,9 @@ export const addTracksToPlaylist = async (ids, token, playlistId) => {
     },
   };
 
-  console.log(toString(`adding tracks to playlist ${toString(axiosParams)}`));
+  console.log(
+    toString(`adding tracks to playlist ${JSON.stringify(axiosParams)}`)
+  );
 
   const { snapshot_id } = await callAxios(axiosParams);
 
@@ -83,9 +85,11 @@ function formatSearchParams(params) {
 }
 
 const convertIdsToSpotifyURI = (ids) => {
-  return ids.map((id) => {
+  const fixedIds = ids.map((id) => {
     return `spotify:track:${id}`;
   });
+
+  return fixedIds;
 };
 
 /*const formatQueryString = (ids) => {
