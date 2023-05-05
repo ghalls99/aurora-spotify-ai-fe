@@ -42,15 +42,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem("playlist")) {
-      const playlistData = JSON.parse(localStorage.getItem("playlist"));
+    if (sessionStorage.getItem("playlist")) {
+      const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
       setResponse(playlistData);
     }
   }, []);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      localStorage.removeItem("playlist");
+      sessionStorage.removeItem("playlist");
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
