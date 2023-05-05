@@ -76,10 +76,18 @@ function App() {
     const playlistData = JSON.parse(localStorage.getItem("playlist"));
     const searchParams = new URLSearchParams(window.location.search);
     const originalCode = searchParams.get("code");
-    setCode(originalCode);
+
+    if (!originalCode) {
+      redirectToAuthCodeFlow(clientId);
+      return;
+    }
+
     console.log(`here is playlist ${playlistData} and code ${code}`);
     setResponse(playlistData);
+
+    setCode(originalCode);
     const accessToken = await getAccessToken(clientId, originalCode);
+
     const ids = await Promise.all(
       playlistData.map(async (item) => {
         const trackId = await searchTracks(item, accessToken);
@@ -90,7 +98,7 @@ function App() {
     const allIds = ids.flat();
 
     const { playlistId } = await createPlaylist(user);
-    const exported = await addTracksToPlaylist(allIds, token, playlistId);
+    const exported = await addTracksToPlaylist(allIds, accessToken, playlistId);
 
     if (exported) {
       console.log(exported);

@@ -24,6 +24,8 @@ export const searchTracks = async (track, token) => {
 
   const response = await callAxios(axiosParams);
 
+  console.log(JSON.stringify(response));
+
   return response[0].id;
 };
 
@@ -91,6 +93,6 @@ export const callAxios = async (params) => {
     console.log(response.error || "error with the request");
     return response.error || "error with the request";
   }
-  console.log(`axios data ${toString(response.data)}`);
+  console.log(`axios data ${JSON.stringify(response.data)}`);
   return response.data;
 };
