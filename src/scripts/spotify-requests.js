@@ -66,6 +66,8 @@ export const createPlaylist = async (user_id, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
+
+  console.log(`axios data ${JSON.stringify(axiosParams)}`);
   const { id } = await callAxios(axiosParams);
   return { playlistId: id };
 };

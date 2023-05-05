@@ -101,7 +101,7 @@ function App() {
     );
     const allIds = ids.flat();
 
-    const { playlistId } = await createPlaylist(id);
+    const { playlistId } = await createPlaylist(id, accessToken);
     const exported = await addTracksToPlaylist(allIds, accessToken, playlistId);
 
     if (exported) {
