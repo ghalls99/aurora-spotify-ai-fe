@@ -182,20 +182,22 @@ function App() {
             <div>
               <SongList items={response} />
             </div>
-            <div>
-              <RegenerateButton
-                isLoading={isExporting}
-                name={"Export To Spotify"}
-                loadingName={"Exporting..."}
-                handleClick={() => {
-                  setIsLoading(true);
-                  getAuth().then(() => {
-                    setIsLoading(false);
-                    handleSpotifyExport();
-                  });
-                }}
-              />
-            </div>
+            {response.length > 0 && (
+              <div>
+                <RegenerateButton
+                  isLoading={isExporting}
+                  name={"Export To Spotify"}
+                  loadingName={"Exporting..."}
+                  handleClick={() => {
+                    setIsLoading(true);
+                    getAuth().then(() => {
+                      setIsLoading(false);
+                      handleSpotifyExport();
+                    });
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
         <div className="App-inputs">
