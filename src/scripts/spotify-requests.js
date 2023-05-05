@@ -31,15 +31,18 @@ export const searchTracks = async (track, token) => {
 };
 
 export const addTracksToPlaylist = async (ids, token, playlistId) => {
+  console.log();
   //const queryString = formatQueryString(ids);
   const tracks = convertIdsToSpotifyURI(ids);
   const string = tracks.join(",");
 
+  console.log(`tracsk and string ${tracks} ${string}`);
+
   const axiosParams = {
     method: "POST",
     url: `${baseUrl}/playlists/${playlistId}/tracks`,
-    params: {
-      q: encodeURI(string),
+    body: {
+      uris: tracks,
     },
     headers: {
       Authorization: `Bearer ${token}`,
