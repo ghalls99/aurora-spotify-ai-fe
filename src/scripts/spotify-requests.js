@@ -129,7 +129,7 @@ const findBestMatchingArtist = (
   for (const track of tracks) {
     console.log(`the track ${JSON.stringify(tracks)}`);
     if (track.artists.length > 1) {
-      for (const artist of artists) {
+      for (const artist of track.artists) {
         subArtists.push(artist.name);
       }
       console.log(`here ${artistToFind} ${subArtists}`);
