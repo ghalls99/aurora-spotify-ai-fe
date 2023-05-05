@@ -160,7 +160,7 @@ const findBestMatchingArtist = (
   }
 
   console.log(`best matching stuff ${JSON.stringify(currentFoundIndex)}`);
-  if (currentFoundIndex.index === -1 || currentFoundIndex === "not-target") {
+  if (currentFoundIndex.index === -1 || currentFoundIndex === "no-target") {
     currentFoundIndex.currentIndex = 0;
   }
   return currentFoundIndex.currentIndex;
