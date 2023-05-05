@@ -40,11 +40,21 @@ function App() {
       localStorage.setItem("exported", true);
       const searchParams = new URLSearchParams(window.location.search);
       const originalCode = searchParams.get("code");
+      const oldAccessToken = localStorage.getItem("access-token");
+      const currentExpir = Number(localStorage.getItem("token-expiration"));
       setCode(originalCode);
 
-      if (!originalCode) {
+      if (
+        !oldAccessToken ||
+        !currentExpir ||
+        currentExpir < Date.now() - currentExpir
+      ) {
         console.log("we are here again");
         redirectToAuthCodeFlow(clientId);
+        localStorage.setItem("token-expiration", String(Date.now()));
+
+        const accessToken = await getAccessToken(clientId, originalCode);
+        localStorage.setItem("access-token", accessToken);
       }
     } catch (error) {
       console.log(error);
@@ -75,6 +85,8 @@ function App() {
       }
     }
   }, []);
+
+  const accessToken = localStorage.getItem("access-token");
 
   //Initial playlist handler
   const handleResponse = (responseData) => {
@@ -128,7 +140,7 @@ function App() {
       return;
     }
 
-    const accessToken = await getAccessToken(clientId, originalCode);
+    console.log(`accessToken ${accessToken}`);
     const { id } = await fetchProfile(accessToken);
 
     // Loop through all the names of the provided songs and find their respective ids
