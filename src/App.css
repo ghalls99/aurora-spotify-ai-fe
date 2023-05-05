@@ -103,6 +103,11 @@ nav a:hover {
 
 .responses-body {
   display: flex;
+  flex-direction: column;
+}
+
+.alerts {
+  width: 40%;
 }
 
 @media only screen and (max-width: 600px) {

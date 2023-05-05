@@ -15,17 +15,22 @@ import {
   createPlaylist,
   searchTracks,
 } from "./scripts/spotify-requests";
+import { Alert, Collapse, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 function App() {
   const [response, setResponse] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [regenerate, setRegenerate] = useState(false);
   const [user, setUser] = useState("");
   const [playlist, setPlaylist] = useState("");
   const [code, setCode] = useState(null);
-  const [token, setToken] = useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [toastMessage, setToastMessage] = useState(false);
+
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
-  const TTL = 30000; // 10 minutes
+  const TTL = 1000; // 10 minutes
 
   const getAuth = useCallback(async () => {
     try {
@@ -63,6 +68,8 @@ function App() {
     const now = Date.now();
     const playlistData = { data: responseData, timestamp: now };
     sessionStorage.setItem("playlist", JSON.stringify(playlistData));
+    setToastMessage("Successfully retrieved list");
+    setOpen(true);
   };
 
   const handleRegenerate = async () => {
@@ -80,10 +87,12 @@ function App() {
     const newPlaylist = JSON.parse(await waitForPlaylist(user, playlist_id));
     setIsLoading(false);
     handleResponse(newPlaylist);
+    setToastMessage("Successfully regenerated list");
+    setOpen(true);
   };
 
   const handleSpotifyExport = async () => {
-    setIsLoading(true);
+    setIsExporting(true);
     const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
 
     console.log(JSON.stringify(playlistData));
@@ -115,9 +124,11 @@ function App() {
 
     if (exported) {
       console.log(exported);
+      setToastMessage("Successfully exported to Spotify");
+      setOpen(true);
     }
 
-    setIsLoading(false);
+    setIsExporting(false);
   };
 
   return (
@@ -141,23 +152,50 @@ function App() {
         </nav>
       </header>
       <div className="App-body">
+        <div className="alerts">
+          {open && (
+            <Collapse in={open}>
+              <Alert
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      setOpen(false);
+                    }}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ mb: 2 }}
+              >
+                {toastMessage}
+              </Alert>
+            </Collapse>
+          )}
+        </div>
         {isLoading ? (
           <Spinner />
         ) : (
           <div className="responses-body">
-            <SongList items={response} />
-            <RegenerateButton
-              isLoading={isLoading}
-              name={"Export To Spotify"}
-              loadingName={"Exporting..."}
-              handleClick={() => {
-                setIsLoading(true);
-                getAuth().then(() => {
-                  setIsLoading(false);
-                  handleSpotifyExport();
-                });
-              }}
-            />
+            <div>
+              <SongList items={response} />
+            </div>
+            <div>
+              <RegenerateButton
+                isLoading={isExporting}
+                name={"Export To Spotify"}
+                loadingName={"Exporting..."}
+                handleClick={() => {
+                  setIsLoading(true);
+                  getAuth().then(() => {
+                    setIsLoading(false);
+                    handleSpotifyExport();
+                  });
+                }}
+              />
+            </div>
           </div>
         )}
         <div className="App-inputs">
