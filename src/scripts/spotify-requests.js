@@ -161,7 +161,9 @@ const findBestMatchingArtist = (
 
   console.log(`best matching stuff ${JSON.stringify(currentFoundIndex)}`);
   if (currentFoundIndex.index === -1 || currentFoundIndex === "no-target") {
-    currentFoundIndex.currentIndex = 0;
+    console.log("no match");
+    return 0;
   }
+
   return currentFoundIndex.currentIndex;
 };
