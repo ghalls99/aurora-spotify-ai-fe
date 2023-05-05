@@ -49,9 +49,7 @@ export const addTracksToPlaylist = async (ids, token, playlistId) => {
     },
   };
 
-  console.log(
-    toString(`adding tracks to playlist ${JSON.stringify(axiosParams)}`)
-  );
+  console.log(`adding tracks to playlist ${JSON.stringify(axiosParams)}`);
 
   const { snapshot_id } = await callAxios(axiosParams);
 
