@@ -160,5 +160,8 @@ const findBestMatchingArtist = (
   }
 
   console.log(`best matching stuff ${JSON.stringify(currentFoundIndex)}`);
+  if (currentFoundIndex.index === -1) {
+    currentFoundIndex.currentIndex = 0;
+  }
   return currentFoundIndex.currentIndex;
 };
