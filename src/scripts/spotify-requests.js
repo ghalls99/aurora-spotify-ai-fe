@@ -27,7 +27,7 @@ export const searchTracks = async (track, token) => {
   const bestMatchingSongIndex = findBestMatchingArtist(
     response.tracks.items,
     track.artist,
-    0.7
+    0.5
   );
 
   console.log(
