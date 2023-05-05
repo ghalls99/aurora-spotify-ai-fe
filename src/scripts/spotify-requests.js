@@ -41,7 +41,7 @@ export const addTracksToPlaylist = async (ids, token, playlistId) => {
   const axiosParams = {
     method: "POST",
     url: `${baseUrl}/playlists/${playlistId}/tracks`,
-    body: {
+    data: {
       uris: tracks,
     },
     headers: {
