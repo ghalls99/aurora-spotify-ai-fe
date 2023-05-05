@@ -62,6 +62,12 @@ function App() {
     const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
     const didClickExport = JSON.parse(localStorage.getItem("exported"));
 
+    const accessToken = Number(localStorage.getItem("token-expiration"));
+
+    if (accessToken && accessToken < Date.now()) {
+      localStorage.removeItem("access-token");
+    }
+
     if (playlistData) {
       const { data, timestamp } = playlistData;
       const now = Date.now();
