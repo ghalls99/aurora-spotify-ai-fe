@@ -4,7 +4,6 @@ export const queryApi = async (url, body = {}, method, headers = {}) => {
   const options = {
     url,
     method,
-    timeout: 10000,
     data: { ...body },
     headers,
   };
