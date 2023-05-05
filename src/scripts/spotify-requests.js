@@ -34,6 +34,8 @@ export const searchTracks = async (track, token) => {
     0.7
   );
 
+  console.log("here we are " + response.tracks.items[bestMatchingSongIndex].id);
+
   return response.tracks.items[bestMatchingSongIndex].id;
 };
 
