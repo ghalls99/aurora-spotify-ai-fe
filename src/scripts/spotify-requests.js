@@ -129,6 +129,7 @@ const findBestMatchingArtist = (
       for (const artist of artists) {
         subArtists.push(artist.name);
       }
+      console.log(`here ${artistToFind} ${subArtists}`);
       const matchingArtist = stringSimilarity.findBestMatch(
         artistToFind,
         subArtists
@@ -143,6 +144,7 @@ const findBestMatchingArtist = (
         };
       }
     } else {
+      console.log(`here ${artistToFind} ${track.artits[0].name}`);
       const match = stringSimilarity.compareTwoStrings(
         artistToFind,
         track.artists[0].name
