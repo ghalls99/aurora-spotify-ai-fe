@@ -25,6 +25,7 @@ function App() {
   const [code, setCode] = useState(null);
   const [token, setToken] = useState(null);
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
+  const TTL = 30000; // 10 minutes
 
   const getAuth = useCallback(async () => {
     try {
@@ -42,28 +43,26 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (sessionStorage.getItem("playlist")) {
-      const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
-      setResponse(playlistData);
+    const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
+
+    if (playlistData) {
+      const { data, timestamp } = playlistData;
+      const now = Date.now();
+
+      if (now - timestamp < TTL) {
+        setResponse(data);
+      } else {
+        sessionStorage.removeItem("playlist");
+      }
     }
-  }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      sessionStorage.removeItem("playlist");
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
   }, []);
 
   const handleResponse = (responseData) => {
     console.log(`we are currently here ${responseData} ${user}`);
     setResponse(responseData);
-    sessionStorage.setItem("playlist", JSON.stringify(responseData));
+    const now = Date.now();
+    const playlistData = { data: responseData, timestamp: now };
+    sessionStorage.setItem("playlist", JSON.stringify(playlistData));
   };
 
   const handleRegenerate = async () => {
