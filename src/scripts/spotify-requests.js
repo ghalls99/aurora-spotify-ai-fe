@@ -144,7 +144,7 @@ const findBestMatchingArtist = (
         };
       }
     } else {
-      console.log(`here ${artistToFind} ${track.artits[0].name}`);
+      console.log(`here ${artistToFind} ${track.artists[0].name}`);
       const match = stringSimilarity.compareTwoStrings(
         artistToFind,
         track.artists[0].name
