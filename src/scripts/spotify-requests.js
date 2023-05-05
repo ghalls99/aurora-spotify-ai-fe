@@ -14,6 +14,7 @@ export const searchTracks = async (track, token) => {
     params: {
       q: `${encodeURI(query)}`,
       type: "track",
+      limit: 1,
     },
     headers: {
       Authorization: `Bearer ${token}`,
@@ -26,7 +27,7 @@ export const searchTracks = async (track, token) => {
 
   console.log(JSON.stringify(response));
 
-  return response[0].id;
+  return response.tracks.items[0].id;
 };
 
 export const addTracksToPlaylist = async (ids, token, playlistId) => {
