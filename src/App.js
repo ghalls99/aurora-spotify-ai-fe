@@ -19,6 +19,7 @@ import { Alert, Collapse, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 function App() {
+  //setting up the states
   const [response, setResponse] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -29,11 +30,14 @@ function App() {
   const [open, setOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = useState(false);
 
+  //Spotify client
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
   let TTL = 30000; // 10 minutes
 
+  //Authorizing spotify
   const getAuth = useCallback(async () => {
     try {
+      localStorage.setItem("exported", true);
       const searchParams = new URLSearchParams(window.location.search);
       const originalCode = searchParams.get("code");
       setCode(originalCode);
@@ -47,8 +51,10 @@ function App() {
     }
   }, []);
 
+  //Initializing web app. Also looking for playlists that have already existed on refresh
   useEffect(() => {
     const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
+    const didClickExport = JSON.parse(localStorage.getItem("exported"));
 
     if (playlistData) {
       const { data, timestamp } = playlistData;
@@ -56,12 +62,15 @@ function App() {
 
       if (now - timestamp < TTL) {
         setResponse(data);
+        handleSpotifyExport();
+        localStorage.removeItem("exported");
       } else {
         sessionStorage.removeItem("playlist");
       }
     }
   }, []);
 
+  //Initial playlist handler
   const handleResponse = (responseData) => {
     console.log(`we are currently here ${responseData} ${user}`);
     setResponse(responseData);
@@ -83,7 +92,7 @@ function App() {
     const { playlist_id } = response;
 
     console.log(String(user), String(playlist_id));
-
+    //Playlist is generated in it's own handler. Hitting the api every six seconds for finished results
     const newPlaylist = JSON.parse(await waitForPlaylist(user, playlist_id));
     setIsLoading(false);
     handleResponse(newPlaylist);
@@ -93,6 +102,7 @@ function App() {
     setOpen(true);
   };
 
+  //Spotify export handler
   const handleSpotifyExport = async () => {
     setIsExporting(true);
     const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
@@ -112,6 +122,7 @@ function App() {
     const accessToken = await getAccessToken(clientId, originalCode);
     const { id } = await fetchProfile(accessToken);
 
+    // Loop through all the names of the provided songs and find their respective ids
     const ids = await Promise.all(
       playlistData.data.map(async (item) => {
         const trackId = await searchTracks(item, accessToken);
@@ -121,6 +132,7 @@ function App() {
     );
     const allIds = ids.flat();
 
+    //Actually creating the playlist
     const { playlistId } = await createPlaylist(id, accessToken);
     const exported = await addTracksToPlaylist(allIds, accessToken, playlistId);
 
@@ -133,6 +145,7 @@ function App() {
     setIsExporting(false);
   };
 
+  //The app itself
   return (
     <div className="App">
       <header className="App-header">
