@@ -86,6 +86,8 @@ function App() {
     setIsLoading(true);
     const playlistData = JSON.parse(sessionStorage.getItem("playlist"));
 
+    console.log(JSON.stringify(playlistData));
+
     const searchParams = new URLSearchParams(window.location.search);
 
     const originalCode = searchParams.get("code") || "";
@@ -100,7 +102,7 @@ function App() {
     const { id } = await fetchProfile(accessToken);
 
     const ids = await Promise.all(
-      playlistData.map(async (item) => {
+      playlistData.data.map(async (item) => {
         const trackId = await searchTracks(item, accessToken);
         console.log(`track id ${trackId}`);
         return trackId;
