@@ -5,9 +5,8 @@ import stringSimilarity from "string-similarity";
 const baseUrl = "https://api.spotify.com/v1";
 
 export const searchTracks = async (track, token) => {
+  console.log(`i made it here ${track}, ${token}`);
   const query = formatSearchParams(track);
-
-  console.log(query);
 
   const axiosParams = {
     method: "GET",
@@ -24,14 +23,19 @@ export const searchTracks = async (track, token) => {
 
   const response = await callAxios(axiosParams);
 
+  console.log(`response ${JSON.stringify(response.tracks.items)}`);
+
   const bestMatchingSongIndex = findBestMatchingArtist(
     response.tracks.items,
     track.artist,
     0.5
   );
 
+  console.log(`index ${bestMatchingSongIndex}`);
+
   console.log(
-    "best matching track" + response.tracks.items[bestMatchingSongIndex].id
+    "best matching track" +
+      JSON.stringify(response.tracks.items[bestMatchingSongIndex])
   );
 
   return response.tracks.items[bestMatchingSongIndex].id;
@@ -159,8 +163,10 @@ const findBestMatchingArtist = (
     index = index + 1;
   }
 
-  console.log(`best matching stuff ${JSON.stringify(currentFoundIndex)}`);
-  if (currentFoundIndex.index === -1 || currentFoundIndex === "no-target") {
+  if (
+    currentFoundIndex.currentIndex === -1 ||
+    currentFoundIndex.target === "no-target"
+  ) {
     console.log("no match");
     return 0;
   }

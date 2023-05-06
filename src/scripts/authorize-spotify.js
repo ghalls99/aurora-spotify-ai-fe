@@ -7,7 +7,7 @@ export async function redirectToAuthCodeFlow(clientId) {
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("response_type", "code");
-  params.append("redirect_uri", "https://main.d38738c23zp9ty.amplifyapp.com/");
+  params.append("redirect_uri", "http://localhost:3000/");
   params.append(
     "scope",
     "user-read-private user-read-email playlist-modify-private playlist-read-collaborative playlist-modify-public playlist-read-private user-top-read streaming"
@@ -45,7 +45,7 @@ export async function getAccessToken(clientId, code) {
   params.append("client_id", clientId);
   params.append("grant_type", "authorization_code");
   params.append("code", code);
-  params.append("redirect_uri", "https://main.d38738c23zp9ty.amplifyapp.com/");
+  params.append("redirect_uri", "http://localhost:3000/");
   params.append("code_verifier", verifier);
 
   const result = await fetch("https://accounts.spotify.com/api/token", {
@@ -55,6 +55,9 @@ export async function getAccessToken(clientId, code) {
   });
 
   const { access_token } = await result.json();
+
+  console.log("did it " + access_token);
+
   return access_token;
 }
 
