@@ -148,18 +148,16 @@ function App() {
 
     // Loop through all the names of the provided songs and find their respective ids
     const ids = await Promise.all(
-      playlistData
-        .map(async (item) => {
-          console.log(`item ${item}`);
-          const trackId = await searchTracks(item, token);
-          console.log(`track id ${trackId}`);
-          return trackId;
-        })
-        .filter((id) => {
-          return id.trim() !== "";
-        })
+      playlistData.map(async (item) => {
+        console.log(`item ${item}`);
+        const trackId = await searchTracks(item, token);
+        console.log(`track id ${trackId}`);
+        return trackId;
+      })
     );
-    const allIds = ids.flat();
+    const allIds = ids.flat().filter((id) => {
+      return id.trim() !== "";
+    });
 
     console.log(`all ids ${JSON.stringify(allIds)}`);
 

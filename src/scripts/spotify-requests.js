@@ -23,9 +23,14 @@ export const searchTracks = async (track, token) => {
 
   const response = await callAxios(axiosParams);
 
-  console.log(`response ${JSON.stringify(response.tracks.items)}`);
+  console.log(
+    `response ${JSON.stringify(response.tracks.items)}, ${JSON.stringify(
+      axiosParams
+    )}`
+  );
 
-  if (response.length === 0) {
+  if (response.length === 0 || response === undefined || response === []) {
+    console.log("returning empty");
     return "";
   }
 
@@ -42,7 +47,7 @@ export const searchTracks = async (track, token) => {
       JSON.stringify(response.tracks.items[bestMatchingSongIndex])
   );
 
-  return response.tracks.items[bestMatchingSongIndex].id;
+  return response.tracks.items[bestMatchingSongIndex]?.id || "";
 };
 
 export const addTracksToPlaylist = async (ids, token, playlistId) => {
