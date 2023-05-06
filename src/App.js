@@ -66,7 +66,7 @@ function App() {
 
   //Initializing web app. Also looking for playlists that have already existed on refresh
   useEffect(() => {
-    const playlistData = JSON.parse(localStorage.getItem("playlist"));
+    const playlistData = JSON.parse(localStorage.getItem("playlist")) || [];
     const didClickExport = JSON.parse(localStorage.getItem("exported"));
     const accessToken = token?.current || localStorage.getItem("token");
 
