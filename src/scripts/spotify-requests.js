@@ -25,6 +25,10 @@ export const searchTracks = async (track, token) => {
 
   console.log(`response ${JSON.stringify(response.tracks.items)}`);
 
+  if (response.length === 0) {
+    return "";
+  }
+
   const bestMatchingSongIndex = findBestMatchingArtist(
     response.tracks.items,
     track.artist,
