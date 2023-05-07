@@ -138,7 +138,7 @@ function App() {
       if (exported) {
         console.log("I am exporting " + exported);
         setToastMessage(
-          "Successfully exported to Spotify. Go to your Spotify app listen to your playlist."
+          "Successfully exported to Spotify. Go to your Spotify app to listen to your playlist."
         );
         setOpen(true);
       }
