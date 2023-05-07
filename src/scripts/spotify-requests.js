@@ -5,7 +5,6 @@ import stringSimilarity from "string-similarity";
 const baseUrl = "https://api.spotify.com/v1";
 
 export const searchTracks = async (track, token) => {
-  console.log(`i made it here ${track}, ${token}`);
   const query = formatSearchParams(track);
 
   const axiosParams = {
@@ -23,14 +22,7 @@ export const searchTracks = async (track, token) => {
 
   const response = await callAxios(axiosParams);
 
-  console.log(
-    `response ${JSON.stringify(response.tracks.items)}, ${JSON.stringify(
-      axiosParams
-    )}`
-  );
-
   if (response.length === 0 || response === undefined || response === []) {
-    console.log("returning empty");
     return "";
   }
 
@@ -39,24 +31,12 @@ export const searchTracks = async (track, token) => {
     track.artist,
     0.5
   );
-
-  console.log(`index ${bestMatchingSongIndex}`);
-
-  console.log(
-    "best matching track" +
-      JSON.stringify(response.tracks.items[bestMatchingSongIndex])
-  );
-
   return response.tracks.items[bestMatchingSongIndex]?.id || "";
 };
 
 export const addTracksToPlaylist = async (ids, token, playlistId) => {
-  console.log();
   //const queryString = formatQueryString(ids);
   const tracks = convertIdsToSpotifyURI(ids);
-  const string = tracks.join(",");
-
-  console.log(`tracsk and string ${tracks} ${string}`);
 
   const axiosParams = {
     method: "POST",
@@ -68,8 +48,6 @@ export const addTracksToPlaylist = async (ids, token, playlistId) => {
       Authorization: `Bearer ${token}`,
     },
   };
-
-  console.log(`adding tracks to playlist ${JSON.stringify(axiosParams)}`);
 
   const { snapshot_id } = await callAxios(axiosParams);
 
@@ -90,13 +68,11 @@ export const createPlaylist = async (user_id, token) => {
     },
   };
 
-  console.log(`axios data ${JSON.stringify(axiosParams)}`);
   const { id } = await callAxios(axiosParams);
   return { playlistId: id };
 };
 
 function formatSearchParams(params) {
-  console.log(params);
   const { song, title, artist } = params;
   let formattedSong = song || title || "";
   return `remaster track:${formattedSong} artist:${artist}`;
@@ -139,7 +115,6 @@ const findBestMatchingArtist = (
       for (const artist of track.artists) {
         subArtists.push(artist.name);
       }
-      console.log(`here ${artistToFind} ${subArtists}`);
       const matchingArtist = stringSimilarity.findBestMatch(
         artistToFind,
         subArtists
@@ -154,7 +129,6 @@ const findBestMatchingArtist = (
         };
       }
     } else {
-      console.log(`here ${artistToFind} ${track.artists[0].name}`);
       const match = stringSimilarity.compareTwoStrings(
         artistToFind,
         track.artists[0].name

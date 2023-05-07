@@ -26,74 +26,43 @@ function App() {
   const [regenerate, setRegenerate] = useState(false);
   const [user, setUser] = useState("");
   const [playlist, setPlaylist] = useState("");
-  const [code, setCode] = useState(null);
   const [token, setToken] = useState(null);
   const [open, setOpen] = React.useState(false);
   const [toastMessage, setToastMessage] = useState(false);
 
   //Spotify client
   const clientId = "f9d2df9fce1d4e1aaf11abe26c4543e6";
-  let TTL = 30000; // 10 minutes
-  //Authorizing spotify
-  const getAuth = useCallback(async () => {
-    try {
-      const searchParams = new URLSearchParams(window.location.search);
-      const code = searchParams.get("code");
-
-      console.log("this is the code " + code);
-      if (!code) {
-        redirectToAuthCodeFlow(clientId);
-      } else {
-        console.log("we are here now");
-        const accessToken = await getAccessToken(clientId, code);
-        console.log("got the token " + accessToken);
-        localStorage.setItem("token", accessToken);
-        setToken(accessToken);
-      }
-      /*localStorage.setItem("exported", true);
-      const oldAccessToken = localStorage.getItem("access-token");
-      const currentExpir = Number(localStorage.getItem("token-expiration"));
-      setCode(originalCode);
-
-      if (!oldAccessToken || !currentExpir || currentExpir < Date.now()) {
-        console.log("we are here again");
-        redirectToAuthCodeFlow(clientId);
-      }*/
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
 
   //Initializing web app. Also looking for playlists that have already existed on refresh
   useEffect(() => {
-    const playlistData = JSON.parse(localStorage.getItem("playlist")) || [];
-    const didClickExport = JSON.parse(localStorage.getItem("exported"));
-    const accessToken = token?.current || localStorage.getItem("token");
+    const searchParams = new URLSearchParams(window.location.search);
 
-    setToken(accessToken);
-    setResponse(playlistData);
+    const playlistData =
+      JSON.parse(localStorage.getItem("playlist")) || response;
+    const didClickExport = JSON.parse(localStorage.getItem("exported"));
+    const accessToken = localStorage.getItem("token");
+
+    setToken(accessToken || undefined);
+    setResponse(playlistData || undefined);
 
     console.log("token " + accessToken);
     console.log("playlistData " + JSON.stringify(playlistData));
     const fetchData = async () => {
       try {
-        if (playlistData) {
-          const { data, timestamp } = playlistData;
-          const now = Date.now();
+        if (playlistData && searchParams.has("code")) {
+          // Check for code parameter
 
-          if (now - timestamp < TTL) {
-            setResponse(data);
-            if (didClickExport) {
-              async function spotifyWrapper() {
-                await handleSpotifyExport();
-                localStorage.removeItem("exported");
-              }
-
-              spotifyWrapper();
+          setResponse(playlistData);
+          if (didClickExport) {
+            async function spotifyWrapper() {
+              await handleSpotifyExport();
+              localStorage.removeItem("exported");
             }
-          } else {
-            sessionStorage.removeItem("playlist");
+
+            spotifyWrapper();
           }
+        } else {
+          localStorage.removeItem("playlist");
         }
       } catch (error) {
         console.error(error);
@@ -101,11 +70,11 @@ function App() {
     };
 
     fetchData();
-  }, [playlist]);
+  }, [playlist]); // Add searchParams to dependencies
+
   //Initial playlist handler
   const handleResponse = (responseData) => {
     setOpen(false);
-    console.log(`we are currently here ${responseData} ${user}`);
     setResponse(responseData);
     localStorage.setItem("playlist", JSON.stringify(responseData));
     setToastMessage("Successfully retrieved list");
@@ -130,48 +99,80 @@ function App() {
     setIsLoading(false);
     handleResponse(newPlaylist);
     sessionStorage.setItem("playlist", JSON.stringify(newPlaylist));
-    TTL = 30000;
     setToastMessage("Successfully regenerated list");
     setOpen(true);
   };
 
-  //Spotify export handler
   const handleSpotifyExport = async () => {
-    setOpen(false);
+    const searchParams = new URLSearchParams(window.location.search);
+    const code = searchParams.get("code");
+    const oldToken = localStorage.getItem("token");
+
     setIsExporting(true);
-    const playlistData = JSON.parse(localStorage.getItem("playlist"));
+    const playlistData =
+      JSON.parse(localStorage.getItem("playlist")) || response;
 
-    console.log(`here is the playlist data ${JSON.stringify(playlistData)}`);
+    console.log(`playlistData ${JSON.stringify(playlistData)}`);
 
-    console.log(`accessToken ${token}`);
-    const { id } = await fetchProfile(token);
+    const updatePlaylist = async (token) => {
+      console.log(`accessToken ${token}`);
+      const { id } = await fetchProfile(token);
 
-    // Loop through all the names of the provided songs and find their respective ids
-    const ids = await Promise.all(
-      playlistData.map(async (item) => {
-        console.log(`item ${item}`);
-        const trackId = await searchTracks(item, token);
-        console.log(`track id ${trackId}`);
-        return trackId;
-      })
-    );
-    const allIds = ids.flat().filter((id) => {
-      return id.trim() !== "";
-    });
+      // Loop through all the names of the provided songs and find their respective ids
+      const ids = await Promise.all(
+        playlistData.map(async (item) => {
+          const trackId = await searchTracks(item, token);
+          return trackId;
+        })
+      );
+      const allIds = ids.flat().filter((id) => {
+        return id.trim() !== "";
+      });
 
-    console.log(`all ids ${JSON.stringify(allIds)}`);
+      //Actually creating the playlist
+      const { playlistId } = await createPlaylist(id, token);
+      const exported = await addTracksToPlaylist(allIds, token, playlistId);
 
-    //Actually creating the playlist
-    const { playlistId } = await createPlaylist(id, token);
-    const exported = await addTracksToPlaylist(allIds, token, playlistId);
+      if (exported) {
+        setToastMessage("Successfully exported to Spotify");
+        setOpen(true);
+      }
 
-    if (exported) {
-      console.log(exported);
-      setToastMessage("Successfully exported to Spotify");
-      setOpen(true);
+      setIsLoading(false);
+      setIsExporting(false);
+    };
+
+    if (code && !oldToken) {
+      const { access_token, expires_in } = await getAccessToken(clientId, code);
+      console.log(`new token ${access_token}`);
+      setToken(access_token);
+      localStorage.setItem("token", access_token);
+      localStorage.setItem(
+        "tokenExpiration",
+        Date.now() + parseInt(expires_in) * 1000
+      );
+      updatePlaylist(access_token);
+    } else if (!code && oldToken) {
+      const expiration = localStorage.getItem("tokenExpiration");
+      const currentTime = Date.now();
+
+      if (expiration && parseInt(expiration) < currentTime) {
+        redirectToAuthCodeFlow(clientId);
+        localStorage.removeItem("token");
+        localStorage.removeItem("tokenExpiration");
+      } else {
+        setToken(oldToken);
+        updatePlaylist(oldToken);
+      }
+    } else {
+      redirectToAuthCodeFlow(clientId);
     }
 
-    setIsExporting(false);
+    setOpen(false);
+  };
+
+  const handleExportClick = () => {
+    handleSpotifyExport();
   };
 
   //The app itself
@@ -205,9 +206,7 @@ function App() {
                     aria-label="close"
                     color="inherit"
                     size="small"
-                    onClick={() => {
-                      setOpen(false);
-                    }}
+                    onClick={handleExportClick}
                   >
                     <CloseIcon fontSize="inherit" />
                   </IconButton>
@@ -234,10 +233,7 @@ function App() {
                   loadingName={"Exporting..."}
                   handleClick={() => {
                     setIsLoading(true);
-                    getAuth().then(() => {
-                      setIsLoading(false);
-                      handleSpotifyExport();
-                    });
+                    handleSpotifyExport();
                   }}
                 />
               </div>
