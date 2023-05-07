@@ -51,7 +51,7 @@ export const addTracksToPlaylist = async (ids, token, playlistId) => {
 
   const { snapshot_id } = await callAxios(axiosParams);
 
-  return snapshot_id;
+  return true;
 };
 
 export const createPlaylist = async (user_id, token) => {

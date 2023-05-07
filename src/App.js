@@ -39,7 +39,7 @@ function App() {
 
     const playlistData =
       JSON.parse(localStorage.getItem("playlist")) || response;
-    const didClickExport = JSON.parse(localStorage.getItem("exported"));
+    const didClickExport = JSON.parse(localStorage.getItem("attemptedExport"));
     const accessToken = localStorage.getItem("token");
 
     setToken(accessToken || undefined);
@@ -54,11 +54,11 @@ function App() {
 
           setResponse(playlistData);
           if (didClickExport) {
+            localStorage.removeItem("attemptedExport");
+
             async function spotifyWrapper() {
               await handleSpotifyExport();
-              localStorage.removeItem("exported");
             }
-
             spotifyWrapper();
           }
         } else {
@@ -133,13 +133,17 @@ function App() {
       const { playlistId } = await createPlaylist(id, token);
       const exported = await addTracksToPlaylist(allIds, token, playlistId);
 
+      console.log("we exported " + exported);
+
       if (exported) {
+        console.log("I am exporting " + exported);
         setToastMessage("Successfully exported to Spotify");
         setOpen(true);
       }
 
       setIsLoading(false);
       setIsExporting(false);
+      localStorage.removeItem("attemptedExport");
     };
 
     if (code && !oldToken) {
@@ -152,7 +156,7 @@ function App() {
         Date.now() + parseInt(expires_in) * 1000
       );
       updatePlaylist(access_token);
-    } else if (!code && oldToken) {
+    } else if ((!code && oldToken) || (code && oldToken)) {
       const expiration = localStorage.getItem("tokenExpiration");
       const currentTime = Date.now();
 
@@ -165,6 +169,8 @@ function App() {
         updatePlaylist(oldToken);
       }
     } else {
+      localStorage.setItem("playlist", JSON.stringify(playlistData));
+      localStorage.setItem("attemptedExport", true);
       redirectToAuthCodeFlow(clientId);
     }
 
@@ -206,7 +212,9 @@ function App() {
                     aria-label="close"
                     color="inherit"
                     size="small"
-                    onClick={handleExportClick}
+                    onClick={() => {
+                      setOpen(false);
+                    }}
                   >
                     <CloseIcon fontSize="inherit" />
                   </IconButton>
@@ -231,10 +239,7 @@ function App() {
                   isLoading={isExporting}
                   name={"Export To Spotify"}
                   loadingName={"Exporting..."}
-                  handleClick={() => {
-                    setIsLoading(true);
-                    handleSpotifyExport();
-                  }}
+                  handleClick={handleExportClick}
                 />
               </div>
             )}
